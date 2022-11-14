@@ -1,0 +1,23 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.markdownlint": true
+  },
+  "eslint.validate": ["javascript"],
+
+  "go.lintFlags": ["--fast"],
+  "go.lintTool": "golangci-lint",
+
+  "markdownlint.config": {
+    "line-length": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  }
+}

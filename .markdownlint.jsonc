@@ -1,0 +1,32 @@
+// Reference: https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint
+// Rules: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#rules
+{
+  // Use the default configurations as a starting point
+  "default": true,
+
+  // Max line length configurations
+  "MD013": {
+    "code_blocks": false,
+    "headings": false,
+    "line_length": 80,
+    "stern": false,
+    "strict": false,
+    "tables": false
+  },
+
+  // Unordered lists use asterisks
+  "MD004": { "style": "asterisk" },
+
+  // First line in a file should be a top-level heading specifying a
+  // title, as such:
+  // ---
+  // title: Page title here
+  // ---
+  "MD041": { "level": 1, "front_matter_title": "^\\s*title\\s*[:=]" },
+
+  // Don't enforce heading level continuity.
+  "MD001": false,
+
+  // Use spaces as opposed to hard-tabs for consistency.
+  "MD010": { "spaces_per_tab": 4 }
+}
