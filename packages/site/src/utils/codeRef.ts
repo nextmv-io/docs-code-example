@@ -59,45 +59,43 @@ export const getCodeSample = ({ fileContents, lines }: GetCodeSampleParams) => {
   if (!lines) {
     return fileContents;
   }
-  // lines specified, get proper excerpt
+
+  // convert string range to array of numbers
+  const rangeArray = lines.split(", ");
+  const lineNumberArray = getLineNumberArray(rangeArray);
+
+  // check to make sure no NaN from incorrect "lines" syntax
+  // if found, return undefined
+  if (
+    lineNumberArray.find(
+      (lineNumber: number | string) => typeof lineNumber !== "number"
+    )
+  ) {
+    return;
+  }
+
+  // get specified lines of code ref
+  const fileContentsByLine = fileContents
+    .split("\n")
+    .filter((_line, index) => lineNumberArray.includes(index + 1));
+
+  // determine how much spacing to trim
+  const tabCountMin = getTabCountMin(fileContentsByLine);
+
+  // something weird happened, escape
+  // (should always be at least a zero count for either)
+  if (tabCountMin === undefined) return;
+
+  // at least one line for both is flush left, no adjustments needed
+  if (tabCountMin === 0) {
+    return fileContentsByLine.join("\n");
+  }
+  // trim lines by min tab count to set code sample flush left;
+  // logic is a bit odd here, but check to see which one is zero
+  // and then trim the other; assumption is mixed spaces and tabs
+  // is in error
   else {
-    // convert string range to array of numbers
-    const rangeArray = lines.split(", ");
-    const lineNumberArray = getLineNumberArray(rangeArray);
-
-    // check to make sure no NaN from incorrect "lines" syntax
-    // if found, return undefined
-    if (
-      lineNumberArray.find(
-        (lineNumber: number | string) => typeof lineNumber !== "number"
-      )
-    ) {
-      return;
-    }
-
-    // get specified lines of code ref
-    const fileContentsByLine = fileContents
-      .split("\n")
-      .filter((_line, index) => lineNumberArray.includes(index + 1));
-
-    // determine how much spacing to trim
-    const tabCountMin = getTabCountMin(fileContentsByLine);
-
-    // something weird happened, escape
-    // (should always be at least a zero count for either)
-    if (tabCountMin === undefined) return;
-
-    // at least one line for both is flush left, no adjustments needed
-    if (tabCountMin === 0) {
-      return fileContentsByLine.join("\n");
-    }
-    // trim lines by min tab count to set code sample flush left;
-    // logic is a bit odd here, but check to see which one is zero
-    // and then trim the other; assumption is mixed spaces and tabs
-    // is in error
-    else {
-      return trimTabs(fileContentsByLine, tabCountMin).join("\n");
-    }
+    return trimTabs(fileContentsByLine, tabCountMin).join("\n");
   }
 };
 

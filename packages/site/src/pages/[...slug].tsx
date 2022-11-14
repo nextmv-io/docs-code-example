@@ -74,18 +74,18 @@ export const getStaticProps = async ({
   };
 
   // set up empty string to hold file contents
-  let markdownWithMeta = "";
+  let markdownFileContent = "";
 
   const filePath = path.join("content", `${slug.join("/")}.md`);
 
   if (fs.existsSync(filePath)) {
-    markdownWithMeta = getFileContents(filePath);
+    markdownFileContent = getFileContents(filePath);
   } else {
     // some paths are directories, look for index file
     const updatedFilePath = filePath.replace(".md", "/index.md");
     try {
       if (fs.existsSync(updatedFilePath)) {
-        markdownWithMeta = getFileContents(updatedFilePath);
+        markdownFileContent = getFileContents(updatedFilePath);
       }
     } catch {
       // no file can be found, return 404
@@ -103,10 +103,9 @@ export const getStaticProps = async ({
   };
 
   // parse markdown into Abstract Syntax Tree (ast)
-  // https://en.wikipedia.org/wiki/Abstract_syntax_tree
-  const ast = Markdoc.parse(markdownWithMeta);
+  const ast = Markdoc.parse(markdownFileContent);
 
-  // fill in any {% ref /%} blocks
+  // replace path reference with code content for {% ref %} blocks
   ast.children.forEach((node, index, astChildren) => {
     // look for standalone {% ref %} blocks
     if (node.tag === "ref") {
@@ -120,8 +119,9 @@ export const getStaticProps = async ({
         const codeSample = getCodeSample({ fileContents, lines });
         if (!codeSample) return;
 
-        // create new node for code sample and add as child node
-        // ref block has no children, it's a self-closing tag
+        // create new node for code sample and add as child node to ref node
+        // this new node will be the only child node as the default ref block
+        // is self-closing and has no children
         const codeNode = createNewFenceNode({
           codeSample,
           language,
