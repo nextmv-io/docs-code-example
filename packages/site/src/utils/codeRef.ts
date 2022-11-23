@@ -27,25 +27,25 @@ const getLineNumberArray = (rangeArray: string[]) => {
   }, []);
 };
 
-const getTabCountMin = (fileContentsByLine: string[]): number | undefined => {
+const getHSpaceCountMin = (
+  fileContentsByLine: string[]
+): number | undefined => {
   return fileContentsByLine.reduce(
-    (tabCount: number | undefined, line: string) => {
-      const lineTabCount = line.length - line.replace(/\t/g, "").length;
-      if (!tabCount) return lineTabCount;
-      if (lineTabCount < tabCount) {
-        return lineTabCount;
-      } else {
-        return tabCount;
-      }
+    (hSpaceCount: number | undefined, line: string) => {
+      const lineHSpaceCount =
+        line.length - line.replace(/^[^\S\r\n]+/g, "").length;
+      if (!hSpaceCount) return lineHSpaceCount;
+      if (lineHSpaceCount < hSpaceCount) return lineHSpaceCount;
+      return hSpaceCount;
     },
     undefined
   );
 };
 
-const trimTabs = (fileContentsByLine: string[], tabCountMin?: number) => {
-  const tabCountRegex = new RegExp(`^[\t]{${tabCountMin}}`, "m");
+const trimHSpace = (fileContentsByLine: string[], hSpaceCountMin: number) => {
+  const hSpaceCountRegex = new RegExp(`^[^\S\r\n]{${hSpaceCountMin}}`, "m");
   return fileContentsByLine.map((line: string) => {
-    return line.replace(tabCountRegex, "");
+    return line.replace(hSpaceCountRegex, "");
   });
 };
 
@@ -53,7 +53,6 @@ type GetCodeSampleParams = {
   fileContents: string;
   lines?: string;
 };
-
 export const getCodeSample = ({ fileContents, lines }: GetCodeSampleParams) => {
   // no lines specified, assign all of file
   if (!lines) {
@@ -80,23 +79,19 @@ export const getCodeSample = ({ fileContents, lines }: GetCodeSampleParams) => {
     .filter((_line, index) => lineNumberArray.includes(index + 1));
 
   // determine how much spacing to trim
-  const tabCountMin = getTabCountMin(fileContentsByLine);
+  const hSpaceCountMin = getHSpaceCountMin(fileContentsByLine);
 
   // something weird happened, escape
   // (should always be at least a zero count for either)
-  if (tabCountMin === undefined) return;
+  if (hSpaceCountMin === undefined) return;
 
   // at least one line for both is flush left, no adjustments needed
-  if (tabCountMin === 0) {
+  if (hSpaceCountMin === 0) {
     return fileContentsByLine.join("\n");
   }
-  // trim lines by min tab count to set code sample flush left;
-  // logic is a bit odd here, but check to see which one is zero
-  // and then trim the other; assumption is mixed spaces and tabs
-  // is in error
-  else {
-    return trimTabs(fileContentsByLine, tabCountMin).join("\n");
-  }
+
+  // trim lines by min horizontal space to set code sample flush left;
+  return trimHSpace(fileContentsByLine, hSpaceCountMin).join("\n");
 };
 
 type GetCodeRefFilePath = {
@@ -118,4 +113,4 @@ export const createNewFenceNode = ({
   codeSample,
   language,
 }: CreateNewFenceNode) =>
-  new Ast.Node("fence", { content: codeSample, language: language });
+  new Ast.Node("fence", { content: codeSample, language });
