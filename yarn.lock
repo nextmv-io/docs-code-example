@@ -56,13 +56,6 @@
   resolved "https://registry.yarnpkg.com/@markdoc/markdoc/-/markdoc-0.1.13.tgz#358408d3b4edf5dae90b51c2d8d89d51743dbd18"
   integrity sha512-zUdUpr2U3tf0uBQKr1aAiNDvwtZChAjCw3WPVv4PMKcPjYYlVHE0lizIS3NjChruRPJ2FvVQAI4ceyNpJWobiw==
 
-"@markdoc/next.js@^0.1.3":
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@markdoc/next.js/-/next.js-0.1.10.tgz#9de7c271b214bf6ad6b371c520d836cebd4c3c52"
-  integrity sha512-ncxQcxDtimRT1h5Xw4VXqLY9OSrOav6hHEkfV6Vq4pKUM3QOsb/RnNo8E1rNIj9hRDH/SvQEQzggTCsQYmAr0g==
-  dependencies:
-    js-yaml "^4.1.0"
-
 "@next/env@12.2.5":
   version "12.2.5"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-12.2.5.tgz#d908c57b35262b94db3e431e869b72ac3e1ad3e3"

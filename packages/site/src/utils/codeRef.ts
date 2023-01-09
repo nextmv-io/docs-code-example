@@ -30,16 +30,15 @@ const getLineNumberArray = (rangeArray: string[]) => {
 const getHSpaceCountMin = (
   fileContentsByLine: string[]
 ): number | undefined => {
-  return fileContentsByLine.reduce(
-    (hSpaceCount: number | undefined, line: string) => {
+  return fileContentsByLine
+    .filter(Boolean)
+    .reduce((hSpaceCount: number | undefined, line: string) => {
       const lineHSpaceCount =
         line.length - line.replace(/^[^\S\r\n]+/g, "").length;
-      if (!hSpaceCount) return lineHSpaceCount;
+      if (hSpaceCount === undefined) return lineHSpaceCount;
       if (lineHSpaceCount < hSpaceCount) return lineHSpaceCount;
       return hSpaceCount;
-    },
-    undefined
-  );
+    }, undefined);
 };
 
 const trimHSpace = (fileContentsByLine: string[], hSpaceCountMin: number) => {
